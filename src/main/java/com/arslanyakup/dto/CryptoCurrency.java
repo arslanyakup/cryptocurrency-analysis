@@ -1,21 +1,23 @@
 package com.arslanyakup.dto;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
-public class CryptoCurrency {
+public class CryptoCurrency implements Serializable {
 
+	private static final long serialVersionUID = 1L;
 	private String id;
 	private String name;
 	private String symbol;
 	private int rank;
 	private Double usdPrice;
-	private BigDecimal usd24HVolume;
+	private String usd24HVolume;
 	private BigDecimal marketCapUsd;
 	private Double tryPrice;
-	private BigDecimal try24HVolume;
+	private String try24HVolume;
 	private BigDecimal marketCapTry;
-	private BigDecimal totalSupply;
-	private BigDecimal maxSupply;
+	private Double totalSupply;
+	private Double maxSupply;
 	private BigDecimal availableSupply;
 	private Double percentChange1H;
 	private Double percentChange24H;
@@ -62,14 +64,6 @@ public class CryptoCurrency {
 		this.usdPrice = usdPrice;
 	}
 
-	public BigDecimal getUsd24HVolume() {
-		return usd24HVolume;
-	}
-
-	public void setUsd24HVolume(BigDecimal usd24hVolume) {
-		usd24HVolume = usd24hVolume;
-	}
-
 	public BigDecimal getMarketCapUsd() {
 		return marketCapUsd;
 	}
@@ -86,11 +80,11 @@ public class CryptoCurrency {
 		this.tryPrice = tryPrice;
 	}
 
-	public BigDecimal getTry24HVolume() {
+	public String getTry24HVolume() {
 		return try24HVolume;
 	}
 
-	public void setTry24HVolume(BigDecimal try24hVolume) {
+	public void setTry24HVolume(String try24hVolume) {
 		try24HVolume = try24hVolume;
 	}
 
@@ -102,19 +96,27 @@ public class CryptoCurrency {
 		this.marketCapTry = marketCapTry;
 	}
 
-	public BigDecimal getTotalSupply() {
+	public String getUsd24HVolume() {
+		return usd24HVolume;
+	}
+
+	public void setUsd24HVolume(String usd24hVolume) {
+		usd24HVolume = usd24hVolume;
+	}
+
+	public Double getTotalSupply() {
 		return totalSupply;
 	}
 
-	public void setTotalSupply(BigDecimal totalSupply) {
+	public void setTotalSupply(Double totalSupply) {
 		this.totalSupply = totalSupply;
 	}
 
-	public BigDecimal getMaxSupply() {
+	public Double getMaxSupply() {
 		return maxSupply;
 	}
 
-	public void setMaxSupply(BigDecimal maxSupply) {
+	public void setMaxSupply(Double maxSupply) {
 		this.maxSupply = maxSupply;
 	}
 
@@ -160,8 +162,8 @@ public class CryptoCurrency {
 
 	@Override
 	public String toString() {
-		return "CryptoCurrency [id=" + id + ", name=" + name + ", symbol=" + symbol + ", rank=" + rank + ", usdPrice=" + usdPrice + ", usd24HVolume=" + usd24HVolume + ", marketCapUsd=" + marketCapUsd + ", tryPrice=" + tryPrice + ", try24HVolume=" + try24HVolume + ", marketCapTry=" + marketCapTry + ", totalSupply=" + totalSupply + ", maxSupply=" + maxSupply + ", availableSupply=" + availableSupply
-				+ ", percentChange1H=" + percentChange1H + ", percentChange24H=" + percentChange24H + ", percentChange7d=" + percentChange7d + ", lastUpdated=" + lastUpdated + "]";
+		return "CryptoCurrency [id=" + id + ", name=" + name + ", symbol=" + symbol + ", rank=" + rank + ", usdPrice=" + usdPrice + ", usd24HVolume=" + usd24HVolume + ", marketCapUsd=" + marketCapUsd + ", tryPrice=" + tryPrice + ", try24HVolume=" + try24HVolume + ", marketCapTry=" + marketCapTry + ", totalSupply=" + totalSupply + ", maxSupply=" + maxSupply + ", availableSupply=" + availableSupply + ", percentChange1H=" + percentChange1H + ", percentChange24H=" + percentChange24H
+				+ ", percentChange7d=" + percentChange7d + ", lastUpdated=" + lastUpdated + "]";
 	}
 
 }
