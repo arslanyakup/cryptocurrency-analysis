@@ -6,8 +6,11 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.arslanyakup.dto.AdvancedFilterRequestDTO;
 import com.arslanyakup.dto.CryptoCurrency;
 import com.arslanyakup.service.CoinMarketCapService;
 
@@ -36,6 +39,11 @@ public class CoinController {
 	@GetMapping("/filter/type/{type}/percentage/{percentage}")
 	public List<CryptoCurrency> percentageProfit7d(@PathVariable String type, @PathVariable Double percentage) {
 		return coinMarketCapService.percentage7dStatus(type, percentage);
+	}
+
+	@PostMapping("/filter/advanced")
+	public List<CryptoCurrency> advancedFilterByPercentChange(@RequestBody AdvancedFilterRequestDTO advancedFilterRequestDTO) {
+		return coinMarketCapService.advancedFilterByPercentChange(advancedFilterRequestDTO);
 	}
 
 	// type is increment or decrement

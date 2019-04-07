@@ -13,9 +13,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import com.arslanyakup.converter.CoinMarketCapResponseConverter;
+import com.arslanyakup.dto.AdvancedFilterRequestDTO;
 import com.arslanyakup.dto.CoinResponseDTOFromCoinMarketCap;
 import com.arslanyakup.dto.CryptoCurrency;
 import com.arslanyakup.util.CoinMarketCapEndpointUri;
+import com.arslanyakup.util.Filter;
 
 @Service
 public class CoinMarketCapService {
@@ -59,6 +61,32 @@ public class CoinMarketCapService {
 		Set<CryptoCurrency> cryptoCurrencies = new HashSet<>();
 		CoinResponseDTOFromCoinMarketCap[] currencyList = restTemplate.getForObject(CoinMarketCapEndpointUri.ALL_COINS, CoinResponseDTOFromCoinMarketCap[].class);
 		Arrays.asList(currencyList).stream().forEach(c -> cryptoCurrencies.add(capResponseConverter.apply(c)));
+		return cryptoCurrencies;
+	}
+
+	public List<CryptoCurrency> advancedFilterByPercentChange(AdvancedFilterRequestDTO advancedFilterRequestDTO) {
+		List<CryptoCurrency> cryptoCurrencies = Arrays.asList(restTemplate.getForObject(CoinMarketCapEndpointUri.ALL_COINS, CoinResponseDTOFromCoinMarketCap[].class)).stream().map(c -> capResponseConverter.apply(c)).collect(Collectors.toList());
+		if (advancedFilterRequestDTO.getPercentChange7d()) {
+			if (Filter.PROFIT.toString().equals(advancedFilterRequestDTO.getPercentType7d())) {
+				cryptoCurrencies = cryptoCurrencies.stream().filter(c -> c.getPercentChange7d() >= advancedFilterRequestDTO.getPercentage7d()).collect(Collectors.toList());
+			} else {
+				cryptoCurrencies = cryptoCurrencies.stream().filter(c -> c.getPercentChange7d() < -advancedFilterRequestDTO.getPercentage7d()).collect(Collectors.toList());
+			}
+		}
+		if (advancedFilterRequestDTO.getPercentChange1d()) {
+			if (Filter.PROFIT.toString().equals(advancedFilterRequestDTO.getPercentType1d())) {
+				cryptoCurrencies = cryptoCurrencies.stream().filter(c -> c.getPercentChange24H() >= advancedFilterRequestDTO.getPercentage1d()).collect(Collectors.toList());
+			} else {
+				cryptoCurrencies = cryptoCurrencies.stream().filter(c -> c.getPercentChange24H() < -advancedFilterRequestDTO.getPercentage1d()).collect(Collectors.toList());
+			}
+		}
+		if (advancedFilterRequestDTO.getPercentChange1h()) {
+			if (Filter.PROFIT.toString().equals(advancedFilterRequestDTO.getPercentType1h())) {
+				cryptoCurrencies = cryptoCurrencies.stream().filter(c -> c.getPercentChange1H() >= advancedFilterRequestDTO.getPercentage1h()).collect(Collectors.toList());
+			} else {
+				cryptoCurrencies = cryptoCurrencies.stream().filter(c -> c.getPercentChange1H() < -advancedFilterRequestDTO.getPercentage1h()).collect(Collectors.toList());
+			}
+		}
 		return cryptoCurrencies;
 	}
 
