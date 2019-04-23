@@ -5,11 +5,13 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import com.arslanyakup.dto.AllCoinsResponseDTO;
 import com.arslanyakup.dto.CoinMarketCapResponseDTO;
 
+@Component
 public class CoinListPrepare {
 
 	@Autowired

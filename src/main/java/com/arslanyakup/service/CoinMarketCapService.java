@@ -6,6 +6,10 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.arslanyakup.dto.AdvancedFilterRequestDTO;
@@ -17,10 +21,14 @@ import com.arslanyakup.util.Filter;
 public class CoinMarketCapService {
 
 	@Autowired
+	private RedisTemplate<String, List<CoinMarketCapResponseDTO>> redisTemplate;
+
+	@Autowired
 	private CoinListPrepare coinListPrepare;
 
+	@Cacheable(value = "coins")
 	private List<CoinMarketCapResponseDTO> coinList() {
-		return coinListPrepare.allCoins();
+		return redisTemplate.opsForValue().get("coins");
 	}
 
 	public CoinMarketCapResponseDTO getCoin(String coinId) {
@@ -46,34 +54,24 @@ public class CoinMarketCapService {
 				: coinList().stream().filter(c -> Double.valueOf(c.getQuote().getTrPriceInfo().getPercentChange7d().toString()) > Double.valueOf(percentage)).sorted((c1, c2) -> c1.getQuote().getTrPriceInfo().getPercentChange7d().compareTo(c2.getQuote().getTrPriceInfo().getPercentChange7d())).collect(Collectors.toList());
 	}
 
-	/*
-	 * public List<CryptoCurrency> sortedByPriceTry(String type) { return
-	 * "decrement".equals(type) ? new ArrayList<>(coinList()).stream().sorted((c1,
-	 * c2) ->
-	 * c1.getQuote().getTrPriceInfo().getPrice().doubleValue().compareTo(Double.
-	 * valueOf(c2.getQuote().getTrPriceInfo().getPrice().doubleValue())).reversed())
-	 * .collect(Collectors.toList()) : new
-	 * ArrayList<>(coinList()).stream().sorted(Comparator.comparingDouble(
-	 * CryptoCurrency::getTryPrice)).collect(Collectors.toList()); }
-	 */
 	public List<CoinMarketCapResponseDTO> advancedFilterByPercentChange(AdvancedFilterRequestDTO advancedFilterRequestDTO) {
 		List<CoinMarketCapResponseDTO> cryptoCurrencies = coinList();
 
-		if (advancedFilterRequestDTO.getPercentChange7d()) {
+		if (advancedFilterRequestDTO.getPercentChange7d() != null && advancedFilterRequestDTO.getPercentChange7d()) {
 			if (Filter.PROFIT.toString().equals(advancedFilterRequestDTO.getPercentType7d())) {
 				cryptoCurrencies = cryptoCurrencies.stream().filter(c -> c.getQuote().getTrPriceInfo().getPercentChange7d() >= advancedFilterRequestDTO.getPercentage7d()).collect(Collectors.toList());
 			} else {
 				cryptoCurrencies = cryptoCurrencies.stream().filter(c -> c.getQuote().getTrPriceInfo().getPercentChange7d() < -advancedFilterRequestDTO.getPercentage7d()).collect(Collectors.toList());
 			}
 		}
-		if (advancedFilterRequestDTO.getPercentChange1d()) {
+		if (advancedFilterRequestDTO.getPercentChange1d() != null && advancedFilterRequestDTO.getPercentChange1d()) {
 			if (Filter.PROFIT.toString().equals(advancedFilterRequestDTO.getPercentType1d())) {
 				cryptoCurrencies = cryptoCurrencies.stream().filter(c -> c.getQuote().getTrPriceInfo().getPercentChange24h() >= advancedFilterRequestDTO.getPercentage1d()).collect(Collectors.toList());
 			} else {
 				cryptoCurrencies = cryptoCurrencies.stream().filter(c -> c.getQuote().getTrPriceInfo().getPercentChange24h() < -advancedFilterRequestDTO.getPercentage1d()).collect(Collectors.toList());
 			}
 		}
-		if (advancedFilterRequestDTO.getPercentChange1h()) {
+		if (advancedFilterRequestDTO.getPercentChange1h() != null && advancedFilterRequestDTO.getPercentChange1h()) {
 			if (Filter.PROFIT.toString().equals(advancedFilterRequestDTO.getPercentType1h())) {
 				cryptoCurrencies = cryptoCurrencies.stream().filter(c -> c.getQuote().getTrPriceInfo().getPercentChange1h() >= advancedFilterRequestDTO.getPercentage1h()).collect(Collectors.toList());
 			} else {
@@ -81,6 +79,12 @@ public class CoinMarketCapService {
 			}
 		}
 		return cryptoCurrencies;
+	}
+
+	@Scheduled(fixedRate = 4500000)
+	@CachePut(key = "coins")
+	private void coinListUpdate() {
+		redisTemplate.opsForValue().set("coins", coinListPrepare.allCoins());
 	}
 
 }
