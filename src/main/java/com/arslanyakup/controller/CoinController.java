@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.arslanyakup.dto.AdvancedFilterRequestDTO;
+import com.arslanyakup.dto.CoinMarketCapResponseDTO;
 import com.arslanyakup.dto.CryptoCurrency;
 import com.arslanyakup.service.CoinMarketCapService;
 
@@ -21,39 +22,40 @@ public class CoinController {
 	private CoinMarketCapService coinMarketCapService;
 
 	@GetMapping("/all")
-	public Set<CryptoCurrency> allCoins() {
+	public List<CoinMarketCapResponseDTO> allCoins() {
 		return coinMarketCapService.getAllCoins();
 	}
 
 	@GetMapping("/{coinId}")
-	public CryptoCurrency coin(@PathVariable String coinId) {
+	public CoinMarketCapResponseDTO coin(@PathVariable String coinId) {
 		return coinMarketCapService.getCoin(coinId);
 	}
 
 	@GetMapping("/filter/minprice/{priceTry}")
-	public Set<CryptoCurrency> filterByMinPrice(@PathVariable Integer priceTry) {
+	public Set<CoinMarketCapResponseDTO> filterByMinPrice(@PathVariable Integer priceTry) {
 		return coinMarketCapService.filterByMinPrice(priceTry);
 	}
 
 	// type is loss or profit
 	@GetMapping("/filter/type/{type}/percentage/{percentage}")
-	public List<CryptoCurrency> percentageProfit7d(@PathVariable String type, @PathVariable Double percentage) {
+	public List<CoinMarketCapResponseDTO> percentageProfit7d(@PathVariable String type, @PathVariable Double percentage) {
 		return coinMarketCapService.percentage7dStatus(type, percentage);
 	}
 
 	@PostMapping("/filter/advanced")
-	public List<CryptoCurrency> advancedFilterByPercentChange(@RequestBody AdvancedFilterRequestDTO advancedFilterRequestDTO) {
+	public List<CoinMarketCapResponseDTO> advancedFilterByPercentChange(@RequestBody AdvancedFilterRequestDTO advancedFilterRequestDTO) {
 		return coinMarketCapService.advancedFilterByPercentChange(advancedFilterRequestDTO);
 	}
 
 	// type is increment or decrement
 	@GetMapping("/sorted/{type}")
 	public List<CryptoCurrency> sortedByPrice(@PathVariable String type) {
-		return coinMarketCapService.sortedByPriceTry(type);
+		// return coinMarketCapService.sortedByPriceTry(type);
+		return null;
 	}
 
 	@GetMapping("/first/{value}")
-	public Set<CryptoCurrency> topXCoins(@PathVariable Integer value) {
+	public Set<CoinMarketCapResponseDTO> topXCoins(@PathVariable Integer value) {
 		return coinMarketCapService.getTopXCoins(value);
 	}
 

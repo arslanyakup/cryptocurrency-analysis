@@ -5,7 +5,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class CoinMarketCapEndpointUri {
 
-	public static final String ALL_COINS = "https://api.coinmarketcap.com/v1/ticker/?convert=TRY&limit=1470";
+	public static final String ALL_COINS = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?start=1&limit=10&convert=TRY";
+	public static final String API_KEY = "";
 
 	private CoinMarketCapEndpointUri() {
 	}
